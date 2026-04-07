@@ -1,24 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import { getNumbers } from './utils';
 import { Pagination } from './components/Pagination';
+import { useSearchParams } from 'react-router-dom';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const items = getNumbers(1, 42).map(n => `Item ${n}`);
-const total = 42;
-//const perPage = 5;
+const total = items.length;
 
 export const App: React.FC = () => {
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const perPage = Number(searchParams.get('perPage')) || 5;
+
   const startIndex = (currentPage - 1) * perPage;
   const visibleItems = items.slice(startIndex, startIndex + perPage);
 
-  const handlePerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue = Number(event.target.value);
+  const updateParams = (params: {
+    page?: string | number;
+    perPage?: string | number;
+  }) => {
+    const newParams = new URLSearchParams(searchParams);
 
-    setPerPage(newValue);
-    setCurrentPage(1);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === null) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value.toString());
+      }
+    });
+
+    setSearchParams(newParams);
+  };
+
+  const handlePerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    // При зміні perPage завжди скидаємо на 1 сторінку за умовою
+    updateParams({
+      perPage: event.target.value,
+      page: 1,
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    updateParams({ page });
   };
 
   return (
@@ -26,7 +50,7 @@ export const App: React.FC = () => {
       <h1>Items with Pagination</h1>
 
       <p className="lead" data-cy="info">
-        {`Page ${currentPage} (items ${(currentPage - 1) * perPage + 1} - ${Math.min(currentPage * perPage, total)} of 42)`}
+        {`Page ${currentPage} (items ${startIndex + 1} - ${Math.min(currentPage * perPage, total)} of ${total})`}
       </p>
 
       <div className="form-group row">
@@ -50,13 +74,13 @@ export const App: React.FC = () => {
         </label>
       </div>
 
-      {/* Move this markup to Pagination */}
       <Pagination
         total={total}
         perPage={perPage}
         currentPage={currentPage}
-        onPageChange={page => setCurrentPage(page)}
+        onPageChange={handlePageChange}
       />
+
       <ul>
         {visibleItems.map(item => (
           <li key={item} data-cy="item">
