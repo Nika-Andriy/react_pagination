@@ -34,7 +34,6 @@ export const App: React.FC = () => {
   };
 
   const handlePerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    // При зміні perPage завжди скидаємо на 1 сторінку за умовою
     updateParams({
       perPage: event.target.value,
       page: 1,

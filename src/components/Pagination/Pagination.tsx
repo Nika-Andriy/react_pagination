@@ -13,7 +13,6 @@ export const Pagination: React.FC<Props> = ({
 }) => {
   const totalPages = Math.ceil(total / perPage);
 
-  // Використовуй цю функцію всюди, де є зміна сторінки
   const handlePageClick = (e: React.MouseEvent, newPage: number) => {
     e.preventDefault();
     if (newPage !== currentPage && newPage >= 1 && newPage <= totalPages) {
