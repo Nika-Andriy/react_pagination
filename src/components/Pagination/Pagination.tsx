@@ -24,7 +24,6 @@ export const Pagination: React.FC<Props> = ({
 
   return (
     <ul className="pagination">
-      {/* Кнопка « */}
       <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
         <a
           data-cy="prevLink"
@@ -37,7 +36,6 @@ export const Pagination: React.FC<Props> = ({
         </a>
       </li>
 
-      {/* Список сторінок */}
       {pages.map(page => (
         <li
           key={page}
@@ -54,7 +52,6 @@ export const Pagination: React.FC<Props> = ({
         </li>
       ))}
 
-      {/* Кнопка » */}
       <li
         className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}
       >
